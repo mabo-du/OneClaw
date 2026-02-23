@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { platforms, getInstallSteps, type Platform } from "@/data/installData";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import CodeBlock from "@/components/CodeBlock";
 import StepNavigator from "@/components/StepNavigator";
 import { CheckCircle, AlertTriangle, Lightbulb, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import { markSectionDone } from "@/hooks/useProgress";
 export default function InstallWizard() {
   const [platform, setPlatform] = useState<Platform | null>(null);
   const [step, setStep] = useState(0);
@@ -118,7 +118,11 @@ export default function InstallWizard() {
         current={step}
         total={steps.length}
         onPrev={() => setStep(Math.max(0, step - 1))}
-        onNext={() => setStep(Math.min(steps.length - 1, step + 1))}
+        onNext={() => {
+          const next = Math.min(steps.length - 1, step + 1);
+          setStep(next);
+          if (next === steps.length - 1) markSectionDone("install");
+        }}
       />
     </div>
   );

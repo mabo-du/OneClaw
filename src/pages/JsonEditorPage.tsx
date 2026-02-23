@@ -1,7 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Upload, RotateCcw, Check, Copy, AlertTriangle } from "lucide-react";
+import { markSectionDone } from "@/hooks/useProgress";
 
 const defaultConfig = {
   channels: {
@@ -36,6 +37,8 @@ export default function JsonEditorPage() {
   const [value, setValue] = useState(JSON.stringify(defaultConfig, null, 2));
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => { markSectionDone("config"); }, []);
 
   const validate = useCallback((text: string) => {
     try {

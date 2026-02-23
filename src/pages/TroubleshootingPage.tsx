@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Search, ExternalLink, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { markSectionDone } from "@/hooks/useProgress";
 
 interface TroubleshootIssue {
   id: string;
@@ -112,6 +113,61 @@ const issues: TroubleshootIssue[] = [
       { step: "macOS/Windows: Install Docker Desktop from https://docker.com/products/docker-desktop" },
     ],
   },
+  {
+    id: "telegram-bot",
+    stage: "Channels",
+    title: "Telegram bot not responding or token invalid",
+    symptoms: ["401 Unauthorized", "Bot token invalid", "Telegram bot not receiving messages", "getUpdates failed"],
+    solutions: [
+      { step: "Verify your bot token with BotFather:", code: "# Open Telegram, message @BotFather\n# Send /mybots → select your bot → API Token" },
+      { step: "Test the token directly:", code: 'curl https://api.telegram.org/bot<YOUR_TOKEN>/getMe' },
+      { step: "Ensure the bot is not already running elsewhere (only one polling instance allowed)." },
+      { step: "Check that your bot has been started — send /start to your bot in Telegram." },
+      { step: "Update openclaw.json with the correct token:", code: '{\n  "channels": {\n    "telegram": {\n      "botToken": "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"\n    }\n  }\n}' },
+    ],
+  },
+  {
+    id: "discord-permissions",
+    stage: "Channels",
+    title: "Discord bot missing permissions or not joining server",
+    symptoms: ["Missing Permissions", "403 Forbidden", "Bot not appearing in server", "DiscordAPIError", "Missing Access"],
+    solutions: [
+      { step: "Ensure the bot has required intents enabled in the Discord Developer Portal:" },
+      { step: "Go to https://discord.com/developers/applications → your app → Bot → enable MESSAGE CONTENT INTENT, SERVER MEMBERS INTENT, and PRESENCE INTENT." },
+      { step: "Generate a proper invite URL with permissions:", code: "# In Developer Portal → OAuth2 → URL Generator\n# Select scopes: bot, applications.commands\n# Select permissions: Send Messages, Read Message History,\n# Embed Links, Attach Files, Use Slash Commands" },
+      { step: "Re-invite the bot using the generated URL." },
+      { step: "Verify the bot token in openclaw.json:", code: '{\n  "channels": {\n    "discord": {\n      "botToken": "YOUR_DISCORD_BOT_TOKEN"\n    }\n  }\n}' },
+      { step: "Check the bot is in the correct channel and has channel-level permissions." },
+    ],
+  },
+  {
+    id: "wsl2-networking",
+    stage: "Prerequisites",
+    title: "WSL2 networking issues (Windows)",
+    symptoms: ["Connection refused from Windows", "Cannot access localhost from WSL", "WSL2 network unreachable", "host.docker.internal not resolving"],
+    solutions: [
+      { step: "Find your WSL2 IP address:", code: "hostname -I  # Run inside WSL" },
+      { step: "Access services from Windows using the WSL2 IP instead of localhost." },
+      { step: "Enable localhost forwarding (Windows 11):", code: "# In %USERPROFILE%\\.wslconfig add:\n[wsl2]\nlocalhostForwarding=true\n\n# Then restart WSL:\nwsl --shutdown" },
+      { step: "For Docker Desktop, enable 'Use the WSL 2 based engine' in Docker settings." },
+      { step: "If using systemd services in WSL2:", code: "# Ensure /etc/wsl.conf contains:\n[boot]\nsystemd=true\n\n# Then: wsl --shutdown and reopen" },
+      { step: "Firewall: Allow WSL2 traffic through Windows Firewall:", code: "# PowerShell (Admin):\nNew-NetFirewallRule -DisplayName \"WSL\" -Direction Inbound -InterfaceAlias \"vEthernet (WSL)\" -Action Allow" },
+    ],
+  },
+  {
+    id: "llm-performance",
+    stage: "Gateway",
+    title: "Local LLM slow or running out of memory",
+    symptoms: ["CUDA out of memory", "Model loading slowly", "Ollama timeout", "Generation extremely slow", "killed (OOM)"],
+    solutions: [
+      { step: "Check available VRAM:", code: "nvidia-smi  # NVIDIA\nrocm-smi   # AMD" },
+      { step: "Use a smaller model if VRAM is limited:", code: "# Good choices by VRAM:\n# 4GB  → qwen2.5:3b, phi3:mini\n# 8GB  → llama3.1:8b, mistral:7b\n# 16GB → llama3.1:70b-q4, codellama:34b\n\nollama pull qwen2.5:3b" },
+      { step: "Enable GPU offloading in Ollama:", code: "# Ollama auto-detects GPU. Verify with:\nollama run llama3.1:8b --verbose\n# Check 'gpu_layers' in output" },
+      { step: "For CPU-only systems, use quantized models:", code: "ollama pull llama3.1:8b-q4_0  # 4-bit quantization" },
+      { step: "Increase Ollama timeout if generation is slow:", code: 'export OLLAMA_KEEP_ALIVE="10m"\nexport OLLAMA_NUM_PARALLEL=1' },
+      { step: "Monitor resource usage during inference:", code: "# Terminal 1: watch nvidia-smi\n# Terminal 2: htop\n# Look for memory pressure and swap usage" },
+    ],
+  },
 ];
 
 const stages = [...new Set(issues.map(i => i.stage))];
@@ -120,6 +176,8 @@ export default function TroubleshootingPage() {
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [ddgQuery, setDdgQuery] = useState("");
+
+  useEffect(() => { markSectionDone("troubleshoot"); }, []);
 
   const filtered = issues.filter(issue => {
     if (selectedStage && issue.stage !== selectedStage) return false;
