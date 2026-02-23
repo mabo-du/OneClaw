@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Download, Brain, FileJson, HelpCircle, ArrowRight } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import ProgressTracker from "@/components/ProgressTracker";
 
 const features = [
   {
@@ -80,6 +81,9 @@ export default function Index() {
           </motion.div>
         ))}
       </div>
+
+      {/* Progress tracker */}
+      <ProgressTracker />
 
       {/* Quick start */}
       <Card className="border-primary/20">

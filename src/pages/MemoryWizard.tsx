@@ -15,6 +15,7 @@ import {
   HardDrive, ExternalLink, Info
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { markSectionDone } from "@/hooks/useProgress";
 
 type WizardPhase = "intro" | "short-term" | "long-term" | "platform" | "install";
 
@@ -368,7 +369,11 @@ export default function MemoryWizard() {
         current={step}
         total={installSteps.length}
         onPrev={() => setStep(Math.max(0, step - 1))}
-        onNext={() => setStep(Math.min(installSteps.length - 1, step + 1))}
+        onNext={() => {
+          const next = Math.min(installSteps.length - 1, step + 1);
+          setStep(next);
+          if (next === installSteps.length - 1) markSectionDone("memory");
+        }}
       />
     </div>
   );
