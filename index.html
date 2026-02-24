@@ -1,30 +1,588 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>OneClaw</title>
-    <meta name="description" content="One Claw to install them all, One Claw to find them, One Claw to troubleshoot them all, and in your system bind them.">
-    <meta name="author" content="Lovable" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OneClaw — One Claw to Rule Them All</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <!-- TODO: Update og:title to match your application name -->
-    
-    
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8eb22941-bb34-4ade-8a59-934173585c66/id-preview-7d73bf97--af299711-f3f3-44da-b795-d0b23b009929.lovable.app-1771889430915.png">
+    :root {
+      --gold: #c9a84c;
+      --gold-bright: #f0c96e;
+      --gold-dim: #6b5420;
+      --ember: #d4501a;
+      --dark: #0a0806;
+      --dark-mid: #110e09;
+      --dark-surface: #1a1510;
+      --dark-border: #2a2218;
+      --text: #e8dcc8;
+      --text-muted: #8a7a60;
+      --claw-red: #8b1a1a;
+    }
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8eb22941-bb34-4ade-8a59-934173585c66/id-preview-7d73bf97--af299711-f3f3-44da-b795-d0b23b009929.lovable.app-1771889430915.png">
-    <meta property="og:title" content="OneClaw">
-  <meta name="twitter:title" content="OneClaw">
-  <meta property="og:description" content="One Claw to install them all, One Claw to find them, One Claw to troubleshoot them all, and in your system bind them.">
-  <meta name="twitter:description" content="One Claw to install them all, One Claw to find them, One Claw to troubleshoot them all, and in your system bind them.">
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--dark);
+      color: var(--text);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 60%, rgba(201,168,76,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 30% at 50% 100%, rgba(212,80,26,0.12) 0%, transparent 60%),
+        var(--dark);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
+    }
+
+    .lobster {
+      font-size: clamp(4rem, 12vw, 9rem);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      filter: drop-shadow(0 0 30px rgba(201,168,76,0.4));
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 40%, var(--gold-bright) 60%, var(--gold) 80%, var(--gold-dim) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+
+    .hero-subtitle-eng {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      letter-spacing: 0.3em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    .inscription {
+      max-width: 660px;
+      padding: 2rem 2.5rem;
+      border: 1px solid var(--gold-dim);
+      background: rgba(201,168,76,0.04);
+      position: relative;
+      margin-bottom: 3rem;
+      clip-path: polygon(12px 0%, calc(100% - 12px) 0%, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0% calc(100% - 12px), 0% 12px);
+    }
+
+    .inscription::before {
+      content: '⸻ The Inscription ⸻';
+      position: absolute;
+      top: -0.65em;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      padding: 0 0.8rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--gold-dim);
+      white-space: nowrap;
+    }
+
+    .inscription p {
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--gold);
+      line-height: 1.9;
+      font-weight: 300;
+    }
+
+    .inscription em {
+      color: var(--gold-bright);
+      font-style: normal;
+    }
+
+    .hero-desc {
+      max-width: 580px;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      padding: 0.9rem 2.2rem;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      clip-path: polygon(8px 0%, calc(100% - 8px) 0%, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 0% calc(100% - 8px), 0% 8px);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #8a6a20, var(--gold), #8a6a20);
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--gold), var(--gold-bright), var(--gold));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(201,168,76,0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--gold);
+      background: rgba(201,168,76,0.07);
+      transform: translateY(-2px);
+    }
+
+    /* ─── SECTION LAYOUT ─── */
+    section {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold-dim), transparent);
+    }
+
+    .section-lead {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 3rem;
+      max-width: 600px;
+    }
+
+    /* ─── FEATURES GRID ─── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      padding: 2rem;
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
+      clip-path: polygon(12px 0%, 100% 0%, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0% 100%, 0% 12px);
+    }
+
+    .feature-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, var(--dark-surface), rgba(201,168,76,0.04));
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .feature-card h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* ─── OS PILLS ─── */
+    .os-section {
+      background: var(--dark-mid);
+      border-top: 1px solid var(--dark-border);
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .os-section > * {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .os-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .os-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 1.4rem;
+      border: 1px solid var(--dark-border);
+      background: var(--dark-surface);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+
+    .os-pill:hover {
+      border-color: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    /* ─── LLM COMPARISON ─── */
+    .llm-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px;
+      background: var(--dark-border);
+      border: 1px solid var(--dark-border);
+      margin-top: 2rem;
+      overflow: hidden;
+    }
+
+    .llm-cell {
+      background: var(--dark-surface);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .llm-cell:first-child { background: rgba(201,168,76,0.06); }
+
+    .llm-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+
+    .llm-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ─── MEMORY ARCH ─── */
+    .memory-diagram {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0;
+      align-items: center;
+    }
+
+    .mem-box {
+      padding: 2rem;
+      border: 1px solid var(--dark-border);
+      text-align: center;
+      background: var(--dark-surface);
+    }
+
+    .mem-box h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    .mem-box.redis h4 { color: #d44040; }
+    .mem-box.qdrant h4 { color: #4a9eff; }
+
+    .mem-box p { font-size: 0.9rem; color: var(--text-muted); }
+
+    .mem-connector {
+      text-align: center;
+      color: var(--gold-dim);
+      font-size: 1.5rem;
+      padding: 0 1rem;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--dark-border);
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      background: var(--dark-mid);
+    }
+
+    footer a {
+      color: var(--gold-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    footer a:hover { color: var(--gold); }
+
+    .footer-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+      margin: 2rem auto;
+    }
+
+    /* ─── CODE BLOCK ─── */
+    .code-block {
+      background: #0d0b08;
+      border: 1px solid var(--dark-border);
+      border-left: 3px solid var(--gold-dim);
+      padding: 1.25rem 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #a0c080;
+      margin-top: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .code-comment { color: var(--text-muted); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 600px) {
+      .llm-row { grid-template-columns: 1fr; }
+      .memory-diagram { grid-template-columns: 1fr; }
+      .mem-connector { transform: rotate(90deg); }
+    }
+
+    /* ─── SCROLL ANIMATIONS ─── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.7s ease forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.35s; }
+    .delay-4 { animation-delay: 0.5s; }
+    .delay-5 { animation-delay: 0.65s; }
+  </style>
 </head>
+<body>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- ─── HERO ─── -->
+  <div class="hero">
+    <div class="lobster fade-in">🦞</div>
+    <h1 class="hero-title fade-in delay-1">OneClaw</h1>
+    <p class="hero-subtitle-eng fade-in delay-2">Installation Wizard for OpenClaw</p>
+
+    <div class="inscription fade-in delay-3">
+      <p>
+        "<em>One Claw</em> to install them all, <em>One Claw</em> to find them,<br>
+        <em>One Claw</em> to troubleshoot them all, and in your system <em>bind</em> them."
+      </p>
+    </div>
+
+    <p class="hero-desc fade-in delay-4">
+      A guided, step-by-step installation wizard for the OpenClaw AI agent — with expanded troubleshooting, LLM comparison, a built-in config editor, and enhanced memory powered by Redis and Qdrant.
+    </p>
+
+    <div class="btn-group fade-in delay-5">
+      <a href="https://clawinstallwiz.lovable.app" class="btn btn-primary">Launch Wizard</a>
+      <a href="https://github.com/mabo-du/OneClaw" class="btn btn-secondary">View on GitHub</a>
+    </div>
+  </div>
+
+  <!-- ─── FEATURES ─── -->
+  <section>
+    <h2 class="section-title">What OneClaw Does</h2>
+    <p class="section-lead">Everything you need to go from zero to a running OpenClaw agent — without wrestling with documentation alone.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🧙‍♂️</span>
+        <h3>Installation Wizard</h3>
+        <p>A friendly, step-by-step guide that walks you through installing OpenClaw on your chosen operating system. No command-line experience required.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🔧</span>
+        <h3>Expanded Troubleshooter</h3>
+        <p>Something go wrong? OneClaw includes a dedicated troubleshooter for every stage of installation, with built-in DuckDuckGo search for issues it can't solve itself.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">⚖️</span>
+        <h3>LLM Comparison</h3>
+        <p>Compare supported large language models — Claude, GPT-4, DeepSeek and more — side by side, so you can choose the AI brain that best fits your needs.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📝</span>
+        <h3>Config Editor</h3>
+        <p>A visual, user-friendly editor for OpenClaw's <code>openclaw.json</code> configuration file. No more editing raw JSON by hand.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🧠</span>
+        <h3>Enhanced Memory</h3>
+        <p>Extended memory architecture using Redis for fast session memory and Qdrant for long-term semantic memory — giving your agent a much sharper mind.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🌐</span>
+        <h3>Multi-Platform</h3>
+        <p>Covers installation on Fedora, Ubuntu, Linux Mint, Arch Linux, Windows 11, and macOS — all from a single, unified wizard.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── OS SUPPORT ─── -->
+  <div class="os-section">
+    <div>
+      <h2 class="section-title">Supported Platforms</h2>
+      <p class="section-lead">OneClaw knows the differences between operating systems so you don't have to.</p>
+      <div class="os-grid">
+        <div class="os-pill">🐧 Fedora</div>
+        <div class="os-pill">🐧 Ubuntu</div>
+        <div class="os-pill">🐧 Linux Mint</div>
+        <div class="os-pill">🐧 Arch Linux</div>
+        <div class="os-pill">🪟 Windows 11</div>
+        <div class="os-pill">🍎 macOS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── LLM COMPARISON ─── -->
+  <section>
+    <h2 class="section-title">LLM Comparison</h2>
+    <p class="section-lead">Not sure which AI model to use with OpenClaw? OneClaw helps you compare them before you commit.</p>
+
+    <div class="llm-row">
+      <div class="llm-cell">
+        <div class="llm-name">Claude</div>
+        <div class="llm-desc">Anthropic · Strong reasoning & nuance</div>
+      </div>
+      <div class="llm-cell">
+        <div class="llm-name">GPT-4</div>
+        <div class="llm-desc">OpenAI · Versatile & widely tested</div>
+      </div>
+      <div class="llm-cell">
+        <div class="llm-name">DeepSeek</div>
+        <div class="llm-desc">Open-source · Cost-efficient</div>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <span class="code-comment"># OneClaw helps you configure your chosen model in openclaw.json</span><br>
+      "model": "claude-opus-4-6" <span class="code-comment">// or gpt-4o, deepseek-chat, and more</span>
+    </div>
+  </section>
+
+  <!-- ─── MEMORY ARCHITECTURE ─── -->
+  <section style="padding-top: 0;">
+    <h2 class="section-title">Enhanced Memory Architecture</h2>
+    <p class="section-lead">OneClaw extends OpenClaw's memory capabilities by wiring up Redis and Qdrant automatically during setup.</p>
+
+    <div class="memory-diagram">
+      <div class="mem-box redis">
+        <h4>🔴 Redis</h4>
+        <p>Fast in-memory store for active session context and short-term memory.</p>
+      </div>
+      <div class="mem-connector">⟷</div>
+      <div class="mem-box qdrant">
+        <h4>🔵 Qdrant</h4>
+        <p>Vector database for long-term semantic memory and knowledge retrieval.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="footer-title">🦞 OneClaw</div>
+    <p><em>"One Claw to rule them all."</em></p>
+    <div class="divider"></div>
+    <p>
+      Built with ❤️ for the <a href="https://openclaw.ai">OpenClaw</a> community ·
+      <a href="https://github.com/mabo-du/OneClaw">GitHub</a> ·
+      <a href="https://clawinstallwiz.lovable.app">Live Wizard</a>
+    </p>
+    <p style="margin-top: 1rem; font-size: 0.8rem;">
+      OneClaw is an independent community project and is not officially affiliated with OpenClaw or its maintainers.
+    </p>
+  </footer>
+
+</body>
 </html>
